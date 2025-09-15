@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cast Your Vote</title>
+</head>
+<body>
+    <h2>Cast Your Vote</h2>
+    <form id="voteForm">
+        <label for="voterId">Voter ID:</label>
+        <input type="number" id="voterId" min="1" required><br><br>
+
+        <label for="candidateId">Select Candidate:</label>
+        <select id="candidateId" required>
+            <option value="">Loading candidates...</option>
+        </select><br><br>
+
+        <button type="submit">Submit Vote</button>
+    </form>
+
+    <p id="voteMsg"></p>
+
+    <script>
+        // Backend se candidates list fetch karo
+        fetch('http://localhost:8080/candidates/all')
+            .then(response => response.json())
+            .then(candidates => {
+                const select = document.getElementById('candidateId');
+                select.innerHTML = "";  // Clear placeholder
+
+                candidates.forEach(candidate => {
+                    const option = document.createElement('option');
+                    option.value = candidate.candidateId;
+                    option.textContent = candidate.name;
+                    select.appendChild(option);
+                });
+            })
+            .catch(() => {
+                document.getElementById('candidateId').innerHTML = "<option value=''>Failed to load candidates</option>";
+            });
+
+        // Vote form submit handler
+        document.getElementById('voteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const voterId = parseInt(document.getElementById('voterId').value, 10);
+            const candidateId = parseInt(document.getElementById('candidateId').value, 10);
+
+            if (!candidateId) {
+                document.getElementById('voteMsg').textContent = "Please select a candidate.";
+                return;
+            }
+
+            fetch('http://localhost:8080/votes/cast', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    voterId: voterId,
+                    candidateId: candidateId,
+                    electionId: 1 // aapka election id
+                })
+            })
+            .then(response => response.text())
+            .then(msg => {
+                document.getElementById('voteMsg').textContent = msg;
+            })
+            .catch(() => {
+                document.getElementById('voteMsg').textContent = "Network/API error!";
+            })
+        });
+    </script>
+</body>
+</html>

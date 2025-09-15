@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting Results</title>
+</head>
+<body>
+    <h2>Voting Results</h2>
+    <button id="refreshBtn">Refresh Results</button>
+    <div id="results"></div>
+
+    <script>
+        async function fetchResults() {
+            try {
+                const response = await fetch('http://localhost:8080/votes/results');
+                const results = await response.json();
+
+                let html = '<ul>';
+                results.forEach(r => {
+                    html += `<li>${r.candidateName}: ${r.voteCount} votes</li>`;
+                });
+                html += '</ul>';
+
+                document.getElementById('results').innerHTML = html;
+            } catch {
+                document.getElementById('results').textContent = 'Error fetching results.';
+            }
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', fetchResults);
+
+        // Initial fetch on page load
+        fetchResults();
+    </script>
+</body>
+</html>
