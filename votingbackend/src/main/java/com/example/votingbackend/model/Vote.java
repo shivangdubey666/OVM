@@ -4,48 +4,33 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@IdClass(VoteId.class)
 @Table(name = "vote")
+@IdClass(VoteId.class) // composite key class
 public class Vote {
-
     @Id
-    @Column(name = "voter_id")
+    @Column(name = "Voter_ID")
     private int voterId;
 
     @Id
-    @Column(name = "candidate_id")
-    private int candidateId;
-
-    @Column(name = "election_id")
+    @Column(name = "Election_ID")
     private int electionId;
 
-    @Column(name = "vote_date")
+    @Column(name = "Candidate_ID")
+    private int candidateId;
+
+    @Column(name = "Vote_Date")
     private LocalDateTime voteDate;
 
-    // Getters and Setters
+    // Getters/Setters
+    public int getVoterId() { return voterId; }
+    public void setVoterId(int voterId) { this.voterId = voterId; }
 
-    public int getVoterId() {
-        return voterId;
-    }
-    public void setVoterId(int voterId) {
-        this.voterId = voterId;
-    }
-    public int getCandidateId() {
-        return candidateId;
-    }
-    public void setCandidateId(int candidateId) {
-        this.candidateId = candidateId;
-    }
-    public int getElectionId() {
-        return electionId;
-    }
-    public void setElectionId(int electionId) {
-        this.electionId = electionId;
-    }
-    public LocalDateTime getVoteDate() {
-        return voteDate;
-    }
-    public void setVoteDate(LocalDateTime voteDate) {
-        this.voteDate = voteDate;
-    }
+    public int getElectionId() { return electionId; }
+    public void setElectionId(int electionId) { this.electionId = electionId; }
+
+    public int getCandidateId() { return candidateId; }
+    public void setCandidateId(int candidateId) { this.candidateId = candidateId; }
+
+    public LocalDateTime getVoteDate() { return voteDate; }
+    public void setVoteDate(LocalDateTime voteDate) { this.voteDate = voteDate; }
 }

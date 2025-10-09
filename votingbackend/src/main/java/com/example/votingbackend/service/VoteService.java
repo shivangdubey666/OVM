@@ -12,18 +12,24 @@ import java.time.LocalDateTime;
 public class VoteService {
 
     @Autowired
-    private VoteRepository voteRepository;
+    VoteRepository voteRepository;
 
     @Autowired
-    private VoterRepository voterRepository;
+    VoterRepository voterRepository;
+
+    public boolean hasVoted(int voterId, int electionId){
+        return voteRepository.existsByVoterIdAndElectionId(voterId, electionId);
+    }
 
     public Vote castVote(Vote vote) throws Exception {
-        if (!voterRepository.existsById(vote.getVoterId())) {
-            throw new Exception("Invalid voter ID. Voter does not exist.");
+        if(!voterRepository.existsById(vote.getVoterId())){
+            throw new Exception("Invalid Voter");
         }
-        if (voteRepository.existsByVoterIdAndCandidateId(vote.getVoterId(), vote.getCandidateId())) {
-            throw new Exception("You have already voted.");
+
+        if(voteRepository.existsByVoterIdAndElectionId(vote.getVoterId(), vote.getElectionId())){
+            throw new Exception("Already Voted");
         }
+
         vote.setVoteDate(LocalDateTime.now());
         return voteRepository.save(vote);
     }

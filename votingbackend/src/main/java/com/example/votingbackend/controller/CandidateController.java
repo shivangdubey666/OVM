@@ -9,14 +9,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/candidates")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:8081", "http://127.0.0.1:5500"}, allowCredentials = "true")
+
 public class CandidateController {
 
     @Autowired
-    private CandidateRepository candidateRepository;
+    CandidateRepository candidateRepository;
 
     @GetMapping("/all")
-    public List<Candidate> getAllCandidates() {
+    public List<Candidate> getAllCandidates(){
         return candidateRepository.findAll();
     }
 }
