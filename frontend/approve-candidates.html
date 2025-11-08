@@ -1,113 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Approve Candidates | OVS</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="form.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approve Candidates | Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        #message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        #message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        #message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        th {
+            padding: 15px 10px;
+            text-align: left;
+            color: #ffffff !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .approve-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .approve-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .reject-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .status-pending {
+            color: #ff9800;
+            font-weight: bold;
+            padding: 5px 12px;
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+    </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav>
-    <div class="logo">🗳️ OVS</div>
-    <ul>
-      <li><a href="admin-dashboard.html">Dashboard</a></li>
-      <li><a href="add-party.html">Add Party</a></li>
-      <li><a href="add-election.html">Add Election</a></li>
-      <li><a href="approve-voters.html">Approve Voters</a></li>
-      <li><a href="approve-candidates.html" class="active">Approve Candidates</a></li>
-      <li><a href="results.html">View Results</a></li>
-      <li><a href="#" id="logoutBtn">Logout</a></li>
-    </ul>
-  </nav>
+    <nav>
+        <div class="logo">🗳️ OVS Admin</div>
+        <ul>
+            <li><a href="admin-dashboard.html">Dashboard</a></li>
+            <li><a href="approve-voters.html">Approve Voters</a></li>
+            <li><a href="approve-candidates.html" class="active">Candidates</a></li>
+            <li><a href="add-election.html">Elections</a></li>
+            <li><a href="admin-login.html">Logout</a></li>
+        </ul>
+    </nav>
 
-  <!-- Content -->
-  <div class="overlay">
-    <h2>Pending Candidates</h2>
-    <table id="candidatesTable" border="1" cellpadding="10" cellspacing="0" style="width:100%; color:#000;">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Party</th>
-          <th>Position</th>
-          <th>Election</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Candidates will be loaded here -->
-      </tbody>
-    </table>
-    <p id="msg"></p>
-  </div>
+    <div class="container">
+        <h2>Pending Candidate Approvals</h2>
+        <p class="subtitle">Review and approve candidates waiting for verification</p>
+        
+        <div id="message"></div>
 
-  <footer>
-    © 2025 Online Voting System | Admin Panel
-  </footer>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>PHONE</th>
+                    <th>PARTY</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="candidatesBody">
+                <tr>
+                    <td colspan="7" class="loading">Loading pending candidates...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-  <script>
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("adminUser");
-      window.location.href = "admin-login.html";
-    });
+    <script>
+        const candidatesBody = document.getElementById('candidatesBody');
+        const messageDiv = document.getElementById('message');
 
-    // Load pending candidates
-    async function loadCandidates() {
-      try {
-        const res = await fetch("http://localhost:8080/admin/candidates/pending");
-        const candidates = await res.json();
-        const tbody = document.querySelector("#candidatesTable tbody");
-        tbody.innerHTML = "";
+        window.addEventListener('load', fetchCandidates);
 
-        candidates.forEach(c => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${c.Candidate_ID}</td>
-            <td>${c.Name}</td>
-            <td>${c.Party_Name || "Independent"}</td>
-            <td>${c.Position}</td>
-            <td>${c.Election_Name}</td>
-            <td>
-              <button onclick="approve(${c.Candidate_ID})">Approve</button>
-              <button onclick="reject(${c.Candidate_ID})">Reject</button>
-            </td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (err) {
-        document.getElementById("msg").textContent = "Error loading candidates.";
-      }
-    }
+        async function fetchCandidates() {
+            try {
+                const response = await fetch('http://localhost:8080/candidate/pending');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch candidates');
+                }
 
-    // Approve candidate
-    async function approve(id) {
-      try {
-        const res = await fetch(`http://localhost:8080/admin/candidate/approve/${id}`, { method: "POST" });
-        const msg = await res.text();
-        document.getElementById("msg").textContent = msg;
-        loadCandidates();
-      } catch {
-        document.getElementById("msg").textContent = "Error approving candidate.";
-      }
-    }
+                const candidates = await response.json();
 
-    // Reject candidate
-    async function reject(id) {
-      try {
-        const res = await fetch(`http://localhost:8080/admin/candidate/reject/${id}`, { method: "POST" });
-        const msg = await res.text();
-        document.getElementById("msg").textContent = msg;
-        loadCandidates();
-      } catch {
-        document.getElementById("msg").textContent = "Error rejecting candidate.";
-      }
-    }
+                if (candidates.length === 0) {
+                    candidatesBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding:60px; color:#999;">
+                                <div style="font-size:18px; font-weight:600;">No Pending Candidates</div>
+                                <div style="margin-top:8px;">All candidates have been processed</div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
 
-    // Initial load
-    loadCandidates();
-  </script>
+                candidatesBody.innerHTML = candidates.map(candidate => `
+                    <tr id="candidate-${candidate.candidateId}">
+                        <td><strong>#${candidate.candidateId}</strong></td>
+                        <td>${candidate.name}</td>
+                        <td>${candidate.email}</td>
+                        <td>${candidate.phone || 'N/A'}</td>
+                        <td>${candidate.party ? candidate.party.name : 'Independent'}</td>
+                        <td><span class="status-pending">Pending</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="approve-btn" onclick="approveCandidate(${candidate.candidateId})">
+                                    ✓ Approve
+                                </button>
+                                <button class="reject-btn" onclick="rejectCandidate(${candidate.candidateId})">
+                                    ✗ Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                candidatesBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:#dc3545;">
+                            Error loading candidates. Please check if the backend server is running.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function approveCandidate(candidateId) {
+            if (!confirm('Approve this candidate?')) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/candidate/approve/${candidateId}`, {
+                    method: 'PUT'
+                });
+
+                const msg = await response.text();
+
+                if (response.ok) {
+                    showMessage(msg, 'success');
+                    document.getElementById(`candidate-${candidateId}`).remove();
+                    
+                    if (candidatesBody.children.length === 0) {
+                        candidatesBody.innerHTML = `
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:60px; color:#999;">
+                                    <div style="font-size:18px; font-weight:600;">No Pending Candidates</div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                } else {
+                    showMessage(msg, 'error');
+                }
+            } catch (error) {
+                showMessage('Error approving candidate', 'error');
+            }
+        }
+
+        async function rejectCandidate(candidateId) {
+            if (!confirm('Reject this candidate? This cannot be undone.')) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/candidate/reject/${candidateId}`, {
+                    method: 'DELETE'
+                });
+
+                const msg = await response.text();
+
+                if (response.ok) {
+                    showMessage(msg, 'success');
+                    document.getElementById(`candidate-${candidateId}`).remove();
+                    
+                    if (candidatesBody.children.length === 0) {
+                        candidatesBody.innerHTML = `
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:60px; color:#999;">
+                                    <div style="font-size:18px; font-weight:600;">No Pending Candidates</div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                } else {
+                    showMessage(msg, 'error');
+                }
+            } catch (error) {
+                showMessage('Error rejecting candidate', 'error');
+            }
+        }
+
+        function showMessage(msg, type) {
+            messageDiv.textContent = msg;
+            messageDiv.className = type;
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
 </body>
 </html>

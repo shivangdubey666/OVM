@@ -28,6 +28,7 @@
     <!-- Overlay + Page Content -->
     <div class="overlay">
         <h2>Cast Your Vote</h2>
+        <p id="welcomeMsg" style="color: #32B8C6; margin-bottom: 10px;"></p>
         <form id="voteForm">
             <label for="candidate">Select Candidate:</label>
             <select id="candidate" required>
@@ -45,14 +46,42 @@
 
     <!-- Script -->
     <script>
+        // Check if voter is logged in
+        window.onload = function() {
+            let voterName = localStorage.getItem('voterName');
+            let voterId = localStorage.getItem('voterId');
+            
+            if (!voterId) {
+                alert('Please login first!');
+                window.location.href = 'voter-login.html';
+                return;
+            }
+            
+            // Display welcome message
+            if (voterName) {
+                document.getElementById('welcomeMsg').textContent = `Welcome, ${voterName}!`;
+            }
+            
+            fetchCandidates();
+        };
+
         // Load candidates on page load
         function fetchCandidates() {
-            fetch('http://localhost:8080/candidates/all')
+            fetch('http://127.0.0.1:8080/api/candidates')
                 .then(response => response.json())
                 .then(data => {
                     let select = document.getElementById('candidate');
-                    select.innerHTML = ""; // Clear placeholder
-                    data.forEach(c => {
+                    select.innerHTML = '<option value="">Select a candidate</option>'; // Clear placeholder
+                    
+                    // Filter only approved candidates
+                    let approvedCandidates = data.filter(c => c.approved === true);
+                    
+                    if (approvedCandidates.length === 0) {
+                        select.innerHTML = '<option value="">No candidates available</option>';
+                        return;
+                    }
+                    
+                    approvedCandidates.forEach(c => {
                         var option = document.createElement('option');
                         option.value = c.candidateId;
                         option.textContent = c.name;
@@ -64,35 +93,62 @@
                 });
         }
 
-        // Submit vote, uses session (no voterId needed)
+        // Submit vote
         document.getElementById('voteForm').addEventListener('submit', function (e) {
             e.preventDefault();
+            
             let candidateId = parseInt(document.getElementById('candidate').value, 10);
             let electionId = 1; // Use your actual electionId
+            let voterId = parseInt(localStorage.getItem('voterId'), 10);
 
             if (!candidateId) {
                 document.getElementById('message').textContent = "Please select a candidate.";
+                document.getElementById('message').style.color = "red";
                 return;
             }
 
-            fetch('http://localhost:8080/votes/cast', {
+            if (!voterId) {
+                document.getElementById('message').textContent = "Session expired. Please login again.";
+                document.getElementById('message').style.color = "red";
+                setTimeout(() => window.location.href = 'voter-login.html', 2000);
+                return;
+            }
+
+            // ✅ Send voterId, candidateId, and electionId
+            fetch('http://127.0.0.1:8080/api/votes/cast', {
                 method: 'POST',
-                credentials: 'include', // For session cookie
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ candidateId: candidateId, electionId: electionId })
+                body: JSON.stringify({ 
+                    voterId: voterId,
+                    candidateId: candidateId, 
+                    electionId: electionId 
+                })
             })
             .then(response => response.text())
             .then(data => {
                 document.getElementById('message').innerText = data;
+                
+                if (data.includes('successfully')) {
+                    document.getElementById('message').style.color = "green";
+                    
+                    // Clear localStorage and redirect after 3 seconds
+                    setTimeout(() => {
+                        localStorage.removeItem('voterId');
+                        localStorage.removeItem('voterName');
+                        alert('Thank you for voting! You will be redirected to home page.');
+                        window.location.href = 'index.html';
+                    }, 3000);
+                } else {
+                    document.getElementById('message').style.color = "red";
+                }
             })
             .catch(err => {
                 document.getElementById('message').innerText = "Error: " + err;
+                document.getElementById('message').style.color = "red";
             });
         });
-
-        fetchCandidates();
     </script>
     <script src="navbar.js"></script>
 </body>

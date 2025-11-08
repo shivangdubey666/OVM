@@ -1,43 +1,67 @@
 package com.example.votingbackend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "candidate")
 public class Candidate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Candidate_ID")
-    private int candidateId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // ✅ ADD THIS LINE
+    @Column(name = "candidate_id")
+    private Integer candidateId;
 
-    @Column(name = "Name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Party_ID")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Party party;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
-    @Column(name = "Position")
-    private String position;
+    @Column(name = "password", nullable = false)
+    private String password;
 
-    @Column(name = "Campaign_Info")
-    private String campaignInfo;
+    @Column(name = "phone")
+    private String phone;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Election_ID")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Election election;
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
-    // Getters and setters
+    @Column(name = "address")
+    private String address;
 
-    public int getCandidateId() {
+    @Column(name = "party_id")
+    private Integer partyId;
+
+    @Column(name = "biography", columnDefinition = "TEXT")
+    private String biography;
+
+    @Column(name = "is_approved", nullable = false)
+    private boolean isApproved = false;  // ✅ Default: not approved
+
+    // ✅ Constructors
+    public Candidate() {
+    }
+
+    public Candidate(String name, String email, String password, String phone,
+                     LocalDate dateOfBirth, String address, Integer partyId, String biography) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.partyId = partyId;
+        this.biography = biography;
+        this.isApproved = false;
+    }
+
+    // ✅ Getters and Setters
+    public Integer getCandidateId() {
         return candidateId;
     }
 
-    public void setCandidateId(int candidateId) {
+    public void setCandidateId(Integer candidateId) {
         this.candidateId = candidateId;
     }
 
@@ -49,35 +73,67 @@ public class Candidate {
         this.name = name;
     }
 
-    public Party getParty() {
-        return party;
+    public String getEmail() {
+        return email;
     }
 
-    public void setParty(Party party) {
-        this.party = party;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getPosition() {
-        return position;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getCampaignInfo() {
-        return campaignInfo;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setCampaignInfo(String campaignInfo) {
-        this.campaignInfo = campaignInfo;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public Election getElection() {
-        return election;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setElection(Election election) {
-        this.election = election;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Integer getPartyId() {
+        return partyId;
+    }
+
+    public void setPartyId(Integer partyId) {
+        this.partyId = partyId;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
     }
 }

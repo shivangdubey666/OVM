@@ -7,20 +7,41 @@ import jakarta.persistence.*;
 public class Admin {
 
     @Id
-    @Column(name = "Admin_ID")
-    private int adminId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")  // ✅ EXACT match - tumhare DB me "id" hai
+    private Integer adminId;
 
-    @Column(name = "Name")
-    private String name;
-
-    @Column(name = "Email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "Password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "Role")
-    private String role;
+    // Default Constructor
+    public Admin() {}
 
-    // Getters and setters
+    // Getters and Setters
+    public Integer getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Integer adminId) {
+        this.adminId = adminId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

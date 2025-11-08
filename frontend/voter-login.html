@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voter Login | OVS</title>
     <link rel="stylesheet" href="style.css">
@@ -51,21 +50,36 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            fetch('http://localhost:8080/voter/login', {
+            fetch('http://127.0.0.1:8080/api/voters/login', {
                 method: 'POST',
-                credentials: 'include', // session cookie ke liye important
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             })
-            .then(response => response.text())
-            .then(msg => {
-                document.getElementById('loginMsg').textContent = msg;
-                if (msg === "Login successful") {
-                    window.location.href = "vote.html";
+            .then(response => {
+                if (response.ok) {
+                    return response.json();  // ✅ Expect JSON response
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
                 }
             })
+            .then(data => {
+                // ✅ Save voterId and name in localStorage
+                localStorage.setItem('voterId', data.voterId);
+                localStorage.setItem('voterName', data.name);
+                
+                document.getElementById('loginMsg').textContent = "Login successful! Redirecting...";
+                document.getElementById('loginMsg').style.color = "green";
+                
+                // Redirect to vote page after 1 second
+                setTimeout(() => {
+                    window.location.href = "vote.html";
+                }, 1000);
+            })
             .catch(err => {
-                document.getElementById('loginMsg').textContent = "Error: " + err;
+                document.getElementById('loginMsg').textContent = "Error: " + err.message;
+                document.getElementById('loginMsg').style.color = "red";
             });
         });
     </script>

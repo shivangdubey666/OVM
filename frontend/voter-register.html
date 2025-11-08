@@ -4,139 +4,291 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voter Registration | OVS</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="form.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Navbar */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        #message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        #message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .note {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 25px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            nav ul li a {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav>
         <div class="logo">🗳️ OVS</div>
-
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-       </div>
-
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="voter-login.html">Voter</a></li>
             <li><a href="voter-register.html" class="active">Voter Register</a></li>
-            <li><a href="candidates.html">Candidate</a></li>
+            <li><a href="candidate-register.html">Candidate</a></li>
             <li><a href="admin-login.html">Admin</a></li>
             <li><a href="results.html">Results</a></li>
         </ul>
     </nav>
 
-    <!-- Overlay + Page Content -->
-    <div class="overlay">
-        <h2>Register as Voter</h2>
+    <!-- Registration Form -->
+    <div class="form-container">
+        <h2>Voter Registration</h2>
         <form id="registerForm">
-            <label>Name:</label>
-            <input type="text" id="name" required>
+            <!-- ❌ REMOVED: Voter ID field (database auto-generates it) -->
 
-            <label>Email:</label>
-            <input type="email" id="email" required>
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" placeholder="Enter your full name" required>
+            </div>
 
-            <label>Password:</label>
-            <input type="password" id="password" required>
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" placeholder="your.email@example.com" required>
+            </div>
 
-            <label>Address:</label>
-            <input type="text" id="address">
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" placeholder="Create a strong password" required>
+            </div>
 
-            <label>Phone:</label>
-            <input type="text" id="phone">
+            <div class="form-group">
+                <label for="address">Address *</label>
+                <input type="text" id="address" placeholder="Enter your complete address" required>
+            </div>
 
-            <label>Date of Birth:</label>
-            <input type="date" id="dob">
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+            </div>
 
-            <button type="submit">Register</button>
+            <div class="form-group">
+                <label for="dob">Date of Birth *</label>
+                <input type="date" id="dob" required>
+            </div>
+
+            <button type="submit">Register Now</button>
         </form>
-        <p id="registerMsg"></p>
+
+        <p id="message"></p>
+        <p class="note">* All fields are required. Registration is pending admin approval.</p>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        © 2025 Online Voting System | All Rights Reserved
-    </footer>
-
-    <!-- Script -->
     <script>
-        document.getElementById("registerForm").addEventListener("submit", function(e) {
+        const form = document.getElementById('registerForm');
+        const message = document.getElementById('message');
+
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const voter = {
-                name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
-                password: document.getElementById("password").value,
-                address: document.getElementById("address").value,
-                phone: document.getElementById("phone").value,
-                date_of_birth: document.getElementById("dob").value
+            // ✅ NO voterId field - database will auto-generate it!
+            const voterData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                dateOfBirth: document.getElementById('dob').value
+                // ❌ NO voterId here!
             };
 
-            fetch("http://localhost:8080/voters/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(voter)
-            })
-            .then(res => res.text())
-            .then(msg => document.getElementById("registerMsg").textContent = msg)
-            .catch(() => document.getElementById("registerMsg").textContent = "Error registering voter.");
+            try {
+                const response = await fetch('http://localhost:8080/api/voters/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(voterData)
+                });
+
+                const result = await response.text();
+                
+                if (response.ok) {
+                    message.className = 'success';
+                    message.textContent = '✅ ' + result;
+                    form.reset();
+                    
+                    // Auto hide after 5 seconds
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 5000);
+                } else {
+                    message.className = 'error';
+                    message.textContent = '❌ ' + result;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                message.className = 'error';
+                message.textContent = '❌ Error connecting to server! Please check if backend is running.';
+            }
         });
+
+        // Set max date to today (must be 18+ years old)
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        document.getElementById('dob').max = maxDate.toISOString().split('T')[0];
     </script>
-     <script src="navbar.js"></script>
 </body>
 </html>
-
-<!--
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Voter Registration</title>
-</head>
-<body>
-    <h2>Register as Voter</h2>
-    <form id="registerForm">
-        <label>Name:</label>
-        <input type="text" id="name" required><br><br>
-        <label>Email:</label>
-        <input type="email" id="email" required><br><br>
-        <label>Password:</label>
-        <input type="password" id="password" required><br><br>
-        <label>Address:</label>
-        <input type="text" id="address"><br><br>
-        <label>Phone:</label>
-        <input type="text" id="phone"><br><br>
-        <label>Date of Birth:</label>
-        <input type="date" id="dob"><br><br>
-        <button type="submit">Register</button>
-    </form>
-
-    <p id="registerMsg"></p>
-
-    <script>
-        document.getElementById("registerForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const voter = {
-                name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
-                password: document.getElementById("password").value,
-                address: document.getElementById("address").value,
-                phone: document.getElementById("phone").value,
-                date_of_birth: document.getElementById("dob").value
-            };
-
-            fetch("http://localhost:8080/voters/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(voter)
-            })
-            .then(res => res.text())
-            .then(msg => document.getElementById("registerMsg").textContent = msg)
-            .catch(() => document.getElementById("registerMsg").textContent = "Error registering voter.");
-        });
-    </script>
-</body>
-</html> -->

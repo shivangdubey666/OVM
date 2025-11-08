@@ -1,85 +1,332 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Candidate Registration | OVS</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="form.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Registration - OVS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #c33;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #3c3;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav>
-    <div class="logo">🗳️ OVS</div>
-    <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Candidate Registration</h1>
+            <p>Join the election as a candidate</p>
+        </div>
+
+        <div class="form-container">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="candidateForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" required placeholder="Create a password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="1234567890">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dob">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="party">Party (Optional)</label>
+                        <select id="party" name="party">
+                            <option value="">Select a party</option>
+                            <!-- Parties will be loaded dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="address">Address <span class="required">*</span></label>
+                    <input type="text" id="address" name="address" required placeholder="Enter your address">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="biography">Biography</label>
+                    <textarea id="biography" name="biography" placeholder="Tell voters about yourself..."></textarea>
+                </div>
+
+                <button type="submit" class="btn">Register as Candidate</button>
+
+                <div class="login-link">
+                    Already registered? <a href="candidate-login.html">Login here</a>
+                </div>
+            </form>
+        </div>
     </div>
-    <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="voter-login.html">Voter</a></li>
-        <li><a href="candidate-register.html" class="active">Candidate Register</a></li>
-       <li><a href="candidate-login.html">Candidate Login</a></li>
-        <li><a href="admin-login.html">Admin</a></li>
-        <li><a href="results.html">Results</a></li>
-    </ul>
-  </nav>
 
-  <!-- Overlay + Form -->
-  <div class="overlay">
-    <h2>Register as Candidate</h2>
-    <form id="candidateRegisterForm">
-      <label>Name:</label>
-      <input type="text" id="name" placeholder="Full Name" required>
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/api/candidates';
+        const PARTY_API_URL = 'http://localhost:8080/api/parties';
 
-      <label>Party:</label>
-      <input type="text" id="party" placeholder="Party Name or Independent" required>
+        // ✅ Load parties on page load
+        window.onload = function() {
+            loadParties();
+        };
 
-      <label>Position:</label>
-      <input type="text" id="position" placeholder="e.g., President" required>
+        // ✅ Load parties for dropdown
+        async function loadParties() {
+            try {
+                const response = await fetch(PARTY_API_URL);
+                if (response.ok) {
+                    const parties = await response.json();
+                    const partySelect = document.getElementById('party');
+                    
+                    parties.forEach(party => {
+                        const option = document.createElement('option');
+                        option.value = party.partyId;
+                        option.textContent = party.name;
+                        partySelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading parties:', error);
+            }
+        }
 
-      <label>Campaign Info:</label>
-      <textarea id="campaign_info" rows="4" placeholder="Enter campaign details" required></textarea>
+        // ✅ Handle form submission
+        document.getElementById('candidateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-      <label>Election:</label>
-      <input type="text" id="election" placeholder="Election Name" required>
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
 
-      <button type="submit">Register</button>
-    </form>
-    <p id="registerMsg"></p>
-  </div>
+            // Get form data
+            const candidate = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                phone: document.getElementById('phone').value,
+                dateOfBirth: document.getElementById('dob').value,
+                address: document.getElementById('address').value,
+                partyId: document.getElementById('party').value || null,
+                biography: document.getElementById('biography').value
+            };
 
-  <!-- Footer -->
-  <footer>
-    © 2025 Online Voting System | All Rights Reserved
-  </footer>
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(candidate)
+                });
 
-  <!-- Script -->
-  <script>
-    document.getElementById("candidateRegisterForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const candidate = {
-        name: document.getElementById("name").value,
-        party: document.getElementById("party").value,
-        position: document.getElementById("position").value,
-        campaign_info: document.getElementById("campaign_info").value,
-        election: document.getElementById("election").value
-      };
-
-      fetch("http://localhost:8080/candidates/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(candidate)
-      })
-      .then(res => res.text())
-      .then(msg => document.getElementById("registerMsg").textContent = msg)
-      .catch(() => document.getElementById("registerMsg").textContent = "Error registering candidate.");
-    });
-  </script>
-  <script src="navbar.js"></script>
+                if (response.ok) {
+                    const message = await response.text();
+                    successMessage.textContent = message;
+                    successMessage.style.display = 'block';
+                    
+                    // Clear form
+                    document.getElementById('candidateForm').reset();
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'candidate-login.html';
+                    }, 2000);
+                } else {
+                    const errorText = await response.text();
+                    errorMessage.textContent = 'Registration failed: ' + errorText;
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Registration failed. Please check your connection and try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
-

@@ -29,25 +29,17 @@
     <div class="overlay">
         <h2>Admin Login</h2>
 
-        <!-- Step 1: Username + Password -->
         <form id="loginForm">
-            <label for="username">Username:</label>
-            <input type="text" id="username" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="admin@voting.com" required>
 
             <label for="password">Password:</label>
-            <input type="password" id="password" required>
+            <input type="password" id="password" placeholder="Enter password" required>
 
             <button type="submit">Login</button>
         </form>
 
-        <!-- Step 2: OTP -->
-        <form id="otpForm" style="display:none; margin-top:20px;">
-            <label for="otp">Enter OTP:</label>
-            <input type="text" id="otp" placeholder="6-digit OTP" required>
-            <button type="submit">Verify OTP</button>
-        </form>
-
-        <p id="loginMsg"></p>
+        <p id="loginMsg" style="margin-top: 15px; color: red;"></p>
     </div>
 
     <!-- Footer -->
@@ -58,54 +50,45 @@
     <script src="navbar.js"></script>
     <script>
         const loginForm = document.getElementById('loginForm');
-        const otpForm = document.getElementById('otpForm');
         const loginMsg = document.getElementById('loginMsg');
 
-        // Step 1: Username + Password
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
+            
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            fetch("http://localhost:8080/admin/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: username, password: password }) // match AdminController fields
-            })
-            .then(res => res.text())
-            .then(msg => {
-                loginMsg.textContent = msg;
-                if (msg.includes("OTP sent")) {
-                    loginForm.style.display = "none";
-                    otpForm.style.display = "block";
-                }
-            })
-            .catch(() => {
-                loginMsg.textContent = "Error connecting to server!";
-            });
-        });
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, password: password })
+                });
 
-        // Step 2: OTP Verification
-        otpForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const otp = document.getElementById('otp').value;
-            const username = document.getElementById('username').value;
-
-            fetch("http://localhost:8080/admin/verify-otp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: username, otp: otp }) // match AdminController
-            })
-            .then(res => res.text())
-            .then(msg => {
-                loginMsg.textContent = msg;
-                if (msg === "Login successful") {
-                    window.location.href = "admin-dashboard.html";
+                if (response.ok) {
+                    const admin = await response.json();
+                    loginMsg.style.color = 'green';
+                    loginMsg.textContent = 'Login successful! Redirecting...';
+                    
+                    // Store admin data in sessionStorage
+                    sessionStorage.setItem('admin', JSON.stringify(admin));
+                    
+                    // Redirect to dashboard after 1 second
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1000);
+                } else {
+                    const errorMsg = await response.text();
+                    loginMsg.style.color = 'red';
+                    loginMsg.textContent = errorMsg || 'Invalid credentials!';
                 }
-            })
-            .catch(() => {
-                loginMsg.textContent = "Error verifying OTP!";
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                loginMsg.style.color = 'red';
+                loginMsg.textContent = 'Error connecting to server!';
+            }
         });
     </script>
 </body>

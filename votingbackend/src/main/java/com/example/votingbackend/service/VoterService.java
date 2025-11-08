@@ -13,11 +13,32 @@ public class VoterService {
     @Autowired
     private VoterRepository voterRepository;
 
-    public List<Voter> getAllVoters() {
-        return voterRepository.findAll();
+    // ✅ Register voter (default: not approved)
+    public void registerVoter(Voter voter) {
+        voter.setApproved(false);  // Default: approval pending
+        voterRepository.save(voter);
     }
 
-    public Voter addVoter(Voter voter) {
-        return voterRepository.save(voter);
+    // ✅ Find voter by email
+    public Voter findByEmail(String email) {
+        return voterRepository.findByEmail(email);
+    }
+
+    // ✅ NEW: Get all pending voters (is_approved = false)
+    public List<Voter> getPendingVoters() {
+        return voterRepository.findByIsApprovedFalse();
+    }
+
+    // ✅ NEW: Approve voter by ID
+    public void approveVoter(Integer id) {
+        Voter voter = voterRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Voter not found with ID: " + id));
+        voter.setApproved(true);
+        voterRepository.save(voter);
+    }
+
+    // ✅ NEW: Reject voter (delete from database)
+    public void rejectVoter(Integer id) {
+        voterRepository.deleteById(id);
     }
 }

@@ -1,36 +1,43 @@
 package com.example.votingbackend.service;
 
-import com.example.votingbackend.model.Vote;
-import com.example.votingbackend.repository.VoteRepository;
-import com.example.votingbackend.repository.VoterRepository;
+import com.example.votingbackend.model.*;
+import com.example.votingbackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VoteService {
 
     @Autowired
-    VoteRepository voteRepository;
+    private VoteRepository voteRepository;
 
     @Autowired
-    VoterRepository voterRepository;
+    private CandidateRepository candidateRepository;
 
-    public boolean hasVoted(int voterId, int electionId){
-        return voteRepository.existsByVoterIdAndElectionId(voterId, electionId);
+    public void castVote(Vote vote) {
+        voteRepository.save(vote);
     }
 
-    public Vote castVote(Vote vote) throws Exception {
-        if(!voterRepository.existsById(vote.getVoterId())){
-            throw new Exception("Invalid Voter");
-        }
+    public List<Map<String, Object>> getResults(Integer electionId) {
+        List<Vote> votes = voteRepository.findAll();
 
-        if(voteRepository.existsByVoterIdAndElectionId(vote.getVoterId(), vote.getElectionId())){
-            throw new Exception("Already Voted");
-        }
+        // Group by candidate and count votes for the given election
+        Map<Candidate, Long> voteCounts = votes.stream()
+                .filter(vote -> vote.getElection().getElectionId() == electionId)
+                .collect(Collectors.groupingBy(Vote::getCandidate, Collectors.counting()));
 
-        vote.setVoteDate(LocalDateTime.now());
-        return voteRepository.save(vote);
+        // Convert to list of maps
+        return voteCounts.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("candidateId", entry.getKey().getCandidateId());
+                    result.put("candidateName", entry.getKey().getName());
+                    result.put("voteCount", entry.getValue());
+                    return result;
+                })
+                .collect(Collectors.toList());
     }
 }
